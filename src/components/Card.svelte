@@ -22,18 +22,18 @@
   };
   
   function handleClick() {
-    if (inactive || animating) return;
+    if (inactive) return;
 
     updateCards([index], 'selected', !selected);
     const {lastCard, cards} = $board;
 
-    // if no last card, set it
+    // if last card not present, set it
     if (lastCard === null) {
       setLast(index);
       return;
     };
 
-    // current card same as last, reset last
+    // clicking on same card, reset last card
     if (lastCard === index) {
       setLast(null);
       return;
