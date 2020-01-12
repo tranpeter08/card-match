@@ -3,17 +3,17 @@
   import Card from './components/Card.svelte';
   import Modal from './components/Modal.svelte';
 
-  let score = 0;
+  let remaining = 8;
 
   function addScore() {
-    score = score + 1;
+    remaining = remaining - 1;
   }
 
 </script>
 
 <main>
-  <h1>Score: {score}</h1>
-  {#if score === 8}
+  <h1>{remaining} Match{ remaining === 1 ? '' : 'es'} Left</h1>
+  {#if remaining === 0}
     <Modal />
   {/if}
   <div class="board">
