@@ -1,9 +1,9 @@
 <script>
   import {board} from './store.js';
   import Card from './components/Card.svelte';
-  import Modal from './components/Card.svelte';
+  import Modal from './components/Modal.svelte';
 
-  let score = 7;
+  let score = 0;
 
   function addScore() {
     score = score + 1;
@@ -17,12 +17,8 @@
     <Modal />
   {/if}
   <div class="board">
-    {#each $board as row, r}
-      <div class="row">
-        {#each row as card, c}
-          <Card {...card} {addScore} pos={{r, c}} />
-        {/each}
-      </div>
+    {#each $board.cards as card, i}
+      <Card {...card} {addScore} index={i} />
     {/each}
   </div>
 </main>
@@ -47,4 +43,9 @@
 			max-width: none;
 		}
 	}
+
+  .board{
+    display: flex;
+    flex-flow: row wrap;
+  }
 </style>

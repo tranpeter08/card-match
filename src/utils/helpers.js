@@ -1,3 +1,11 @@
+export class CardData {
+  constructor(value) {
+    this.value = value;
+    this.inactive = false;
+    this.selected = false;
+  }
+}
+
 function generateNum(min, max) {
   return Math.floor(Math.random() * (max - min + 1)) + min;
 }
@@ -26,31 +34,15 @@ function createValues() {
   return values;
 }
 
-class CardData {
-  constructor(value) {
-    this.match = false;
-    this.selected = false;
-    this.value = value;
-  }
-}
-
-function createBoard() {
-  let board = new Array(4).fill(null);
+function createCards() {
+  let board = new Array(16).fill(null);
   let values = createValues();
 
   for (let i = 0; i < board.length; i++) {
-    const arr = [];
-    for (let j = 0; j < board.length; j++) {
-      arr.push(new CardData(values.pop()));
-    }
-    board[i] = arr;
+    board[i] = new CardData(values.pop());
   }
 
   return board;
 }
 
-function cardAt(b, {r, c}) {
-  return b[r][c];
-}
-
-export {createBoard, cardAt};
+export {createCards};

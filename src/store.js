@@ -1,45 +1,27 @@
 import {writable} from 'svelte/store';
-import {createBoard, cardAt} from './utils/helpers';
+import {createCards} from './utils/helpers';
 
-const last = writable(null);
-const isAnimating = writable(false);
+const board = writable({
+  lastCard: null,
+  cards: createCards()
+});
 
-const board = writable(createBoard());
+function updateCards(idxs, prop, value) {
+  board.update(state => {
+    let c = [...state.cards];
 
-function updateBoard(...args) {
-  board.update(b => {
-    let _b = [...b];
-
-    args.forEach(p => {
-      cardAt(_b, p).selected = !cardAt(b, p).selected;
+    idxs.forEach(i => {
+      c[i][prop] = value;
     });
 
-    return [..._b];
+    return {...state, cards: c};
   });
 }
 
-function setMatches(...args) {
-  board.update(b => {
-    let _b = [...b];
-
-    args.forEach(p => {
-      cardAt(_b, p).match = true;
-    });
-
-    return [..._b];
+function setLast(index) {
+  board.update(state => {
+    return {...state, lastCard: index};
   });
 }
 
-function toggleAnimate(...args) {
-  board.update(b => {
-    let _b = [...b];
-
-    args.forEach(p => {
-      cardAt(_b, p).isAnimating = !cardAt(b, p).isAnimating;
-    });
-
-    return [..._b];
-  });
-}
-
-export {board, updateBoard, last, setMatches, isAnimating, toggleAnimate};
+export {board, updateCards, setLast};

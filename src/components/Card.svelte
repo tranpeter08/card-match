@@ -2,75 +2,66 @@
   import {onDestroy} from 'svelte';
   import {
     board, 
-    updateBoard, 
-    last, 
-    setMatches,
-    isAnimating,
-    toggleAnimate,
-    updateScore
-    } from  '../store.js';
-    import {cardAt} from '../utils/helpers.js';
+    setLast,
+    updateCards
+  } from  '../store.js';
 
-  export let pos, match, selected, addScore;
+  export let index, inactive, selected, addScore, value;
 
-  let timer = {},
-    inActiveTimer = {},
-    inActive = false;
+  let flipTimer = {},
+    inactiveTimer = {},
+    disabled = false;
 
   onDestroy(() => {
-    timer.clearTimeOut();
-    inActiveTimer.clearTimeOut();
+    flipTimer.clearTimeOut();
+    inactiveTimer.clearTimeOut();
   });
 
-  $: if (match) {
-    inActiveTimer = setTimeout(() => {inActive = match}, 1000);
+  $: if (inactive) {
+    inactiveTimer = setTimeout(() => (disabled = inactive), 1000);
   };
   
   function handleClick() {
-    if (cardAt($board, pos).match || $isAnimating) return;
+    if (inactive || animating) return;
 
-    updateBoard(pos);
+    updateCards([index], 'selected', !selected);
+    const {lastCard, cards} = $board;
 
     // if no last card, set it
-    if (!$last) {
-      last.set(pos);
+    if (lastCard === null) {
+      setLast(index);
       return;
     };
 
     // current card same as last, reset last
-    if ($last == pos) {
-      last.set(null);
+    if (lastCard === index) {
+      setLast(null);
       return;
     };
 
     // current value matches the last
-    if (cardAt($board, $last).value === cardAt($board, pos).value) {
+    if (cards[lastCard].value === value) {
+      updateCards([lastCard, index], 'inactive', true);
       addScore();
-      setMatches($last, pos);
-      last.set(null);
       return;
     };
 
-    // not a match, start rotate back to default
-    isAnimating.set(true);
-    timer = setTimeout(flipCards, 1000);
-  };
+    setLast(null)
 
-  function flipCards() {
-    updateBoard(pos, $last);
-    last.set(null);
-    isAnimating.set(false);
+    flipTimer = setTimeout(() => {
+      updateCards([index, lastCard], 'selected', !selected);
+    }, 1000)
   };
 
 </script>
 
-<div class="flip-card" class:animating={$isAnimating} on:click={handleClick} >
+<div class="flip-card" on:click={handleClick} >
   <div class:selected class="flip-card-inner">
     <div class="flip-card-front">
       <h1>HELLO</h1>
     </div>
-    <div class:inActive class="flip-card-back">
-      <h1>{cardAt($board, pos).value}</h1>
+    <div class:disabled class="flip-card-back">
+      <h1>{value}</h1>
     </div>
   </div>
 </div>
@@ -81,11 +72,11 @@
 .flip-card {
   background-color: transparent;
   width: 200px;
+  max-width: calc(25% - 10px);
   height: 100px;
   border: 1px solid #f1f1f1;
   perspective: 1000px; /* Remove this if you don't want the 3D effect */
-  flex: 1 0 33%;
-  display: inline-block;
+  flex: 1 0 25%;
 }
 
 /* This container is needed to position the front and back side */
@@ -105,10 +96,6 @@
 
 .flip-card:hover {
   cursor: pointer;
-}
-
-.animating.flip-card:hover, .animating {
-  cursor: not-allowed;
 }
 
 .selected{
@@ -137,12 +124,12 @@
   transform: rotateY(180deg);
 }
 
-.inActive {
+.disabled {
   opacity: 0.5;
   transition: 1s;
 }
 
-.inActive:hover {
+.disabled:hover {
   cursor: default;
 }
 </style>
