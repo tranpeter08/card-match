@@ -6,7 +6,7 @@ const board = writable({
   cards: createCards()
 });
 
-function updateCards(idxs, prop, value) {
+function updateCards(idxs, prop, value, clearLast) {
   board.update(state => {
     let c = [...state.cards];
 
@@ -14,7 +14,7 @@ function updateCards(idxs, prop, value) {
       c[i][prop] = value;
     });
 
-    return {...state, cards: c};
+    return {...state, cards: c, lastCard: clearLast ? null : state.lastCard};
   });
 }
 

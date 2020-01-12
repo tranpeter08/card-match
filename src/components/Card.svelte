@@ -22,9 +22,9 @@
   };
   
   function handleClick() {
-    if (inactive) return;
+    if (inactive || selected) return;
 
-    updateCards([index], 'selected', !selected);
+    updateCards([index], 'selected', true);
     const {lastCard, cards} = $board;
 
     // if last card not present, set it
@@ -41,15 +41,15 @@
 
     // current value matches the last
     if (cards[lastCard].value === value) {
-      updateCards([lastCard, index], 'inactive', true);
+      updateCards([lastCard, index], 'inactive', true, true);
       addScore();
       return;
     };
 
-    setLast(null)
+    setLast(null);
 
     flipTimer = setTimeout(() => {
-      updateCards([index, lastCard], 'selected', !selected);
+      updateCards([index, lastCard], 'selected', false);
     }, 1000)
   };
 
@@ -58,7 +58,7 @@
 <div class="flip-card" on:click={handleClick} >
   <div class:selected class="flip-card-inner">
     <div class="flip-card-front">
-      <h1>HELLO</h1>
+      <h1>{value}</h1>
     </div>
     <div class:disabled class="flip-card-back">
       <h1>{value}</h1>
@@ -101,6 +101,7 @@
 .selected{
   transform: rotateY(180deg);
   transition: 0.8s;
+  cursor: not-allowed;
 }
 
 /* Position the front and back side */
