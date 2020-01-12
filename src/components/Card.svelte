@@ -58,7 +58,14 @@
 <div class="flip-card" on:click={handleClick} >
   <div class:selected class="flip-card-inner">
     <div class="flip-card-front">
-      <h1>{value}</h1>
+      <h1>
+        <img 
+          src="images/icon.png" 
+          width="40px" 
+          height="40px" 
+          alt='Svelte Icon'
+        >
+      </h1>
     </div>
     <div class:disabled class="flip-card-back">
       <h1>{value}</h1>
@@ -101,7 +108,6 @@
 .selected{
   transform: rotateY(180deg);
   transition: 0.8s;
-  cursor: not-allowed;
 }
 
 /* Position the front and back side */
@@ -130,7 +136,7 @@
   transition: 1s;
 }
 
-.disabled:hover {
+.disabled:hover, .selected {
   cursor: default;
 }
 </style>
